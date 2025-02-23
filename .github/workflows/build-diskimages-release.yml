@@ -45,6 +45,7 @@ jobs:
     - name: Create shared user configuration
       run: cat config.toml.in > config.toml
 
+
     - name: Build image - systemd
       id: build-image-systemd
       run: |
@@ -70,6 +71,7 @@ jobs:
 
     - name: Rename output file - systemd
       run: sudo mv ./output/qcow2/disk.qcow2 ./output/qcow2/systemd-disk.qcow2
+
 
     - name: Build image - code-cli
       id: build-image-code-cli
@@ -97,10 +99,14 @@ jobs:
     - name: Rename output file - code-cli
       run: sudo mv ./output/qcow2/disk.qcow2 ./output/qcow2/code-cli-disk.qcow2
 
+
+    - name: Set release tag
+      run: echo "TAG=$(date +'%y%m%d')" >> $GITHUB_ENV
+
     - name: Create a GitHub release
       uses: ncipollo/release-action@v1
       with:
-        tag: latest
-        name: Latest
+        tag: ${{ env.TAG }}
+        name: Disk images (${{ env.TAG }})
         body: ${{ env.BODY }}
         artifacts: "output/bootiso/*.iso,./output/qcow2/*,"
